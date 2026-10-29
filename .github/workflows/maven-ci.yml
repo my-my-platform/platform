@@ -1,0 +1,50 @@
+name: maven-ci
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: [self-hosted, linux, java]
+    env:
+      NEXUS_URL: ${{ vars.NEXUS_URL }}
+      NEXUS_USER: ${{ secrets.NEXUS_USER }}
+      NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Maven settings (Nexus)
+        run: |
+          mkdir -p ~/.m2
+          cat > ~/.m2/settings.xml <<'EOF'
+          <settings>
+            <servers>
+              <server>
+                <id>nexus</id>
+                <username>${env.NEXUS_USER}</username>
+                <password>${env.NEXUS_PASSWORD}</password>
+              </server>
+            </servers>
+            <mirrors>
+              <mirror>
+                <id>nexus</id>
+                <mirrorOf>*</mirrorOf>
+                <url>${env.NEXUS_URL}/repository/maven-public/</url>
+              </mirror>
+            </mirrors>
+          </settings>
+          EOF
+
+      - name: Build and test
+        run: mvn -B -ntp verify
+
+      - name: Deploy to Nexus
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: mvn -B -ntp deploy -DskipTests
