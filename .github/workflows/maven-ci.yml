@@ -8,7 +8,7 @@ jobs:
     runs-on: [self-hosted, linux, java]
     env:
       NEXUS_URL: ${{ vars.NEXUS_URL }}
-      NEXUS_USER: ${{ secrets.NEXUS_USER }}
+      NEXUS_USER: ${{ vars.NEXUS_USER }}
       NEXUS_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}
     steps:
       - name: Checkout
