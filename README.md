@@ -1,0 +1,2 @@
+# platform
+Base project settings
