@@ -1,0 +1,24 @@
+name: renovate
+
+on:
+  workflow_dispatch:
+
+jobs:
+  renovate:
+    runs-on: [self-hosted, linux, java]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Run Renovate
+        run: npx --yes renovate
+        env:
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          RENOVATE_CONFIG_FILE: renovate-config.json
+          RENOVATE_HOST_RULES: '[{"matchHost":"nexus","username":"${{ vars.NEXUS_USER }}","password":"${{ secrets.NEXUS_PASSWORD }}"}]'
+          LOG_LEVEL: info
