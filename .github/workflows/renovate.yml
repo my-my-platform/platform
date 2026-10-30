@@ -21,4 +21,4 @@ jobs:
           RENOVATE_TOKEN: ${{ secrets.RENOVAT_TOKEN }}
           RENOVATE_CONFIG_FILE: renovate-config.json
           RENOVATE_HOST_RULES: '[{"matchHost":"nexus","username":"${{ vars.NEXUS_USER }}","password":"${{ secrets.NEXUS_PASSWORD }}"}]'
-          LOG_LEVEL: info
+          LOG_LEVEL: debug
